@@ -12,6 +12,7 @@
 - 2 LED
 - 2 Resistor 220 Ω
 - 2 Resistor 10k Ω
+- 2 botões
 - Fios Jumper’s
 - 1 Protoboard
 - Arduino Uno ou outro.
