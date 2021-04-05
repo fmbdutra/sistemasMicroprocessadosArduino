@@ -48,38 +48,39 @@ void setup()
 
 void loop()
 {
-
+  //Registrar estado do botão de incremento
   estadoBotaoA = digitalRead(2);
-  delay(200);
+  delay(200); //Delay para poder não dar conflito
+  
+  //Registrar estado do botão decremento
   estadoBotaoB = digitalRead(4);
-  delay(200);
-
-
+  delay(200); //Delay para poder gravar o estado
 
   /*
-    Dois botões pressionados ao mesmo tempo e valor
-    igual a 0 - LEDs desligados (D)
+    Dois botões pressionados ao mesmo tempo e contador binário já resetado.
+    LEDs piscarão.
   */
   if (tamanhoBinario == 0 &&
       (estadoBotaoA == HIGH && estadoBotaoB == HIGH)) {
 
     //Aqui para ver se foi os 2 pressionados ligar, o LED da placa
     digitalWrite(13, HIGH);
-    digitalWrite(10, HIGH);
-    digitalWrite(12, HIGH);
-    delay(1000);
-    digitalWrite(13, LOW);
+   
+    digitalWrite(12, HIGH); //Liga LED A
+    digitalWrite(10, HIGH); //Liga LED B
+    
+    delay(1000);// Delay para LED da placa
+    digitalWrite(13, LOW); //Desliga LED da placa
 
 
     Serial.println("Indicador já resetado"); //Imprime no monitor
     delay(2000); //Para não ir muito rápido e já ir para a parte C do exercício
-    acendeLeds(tamanhoBinario);
-
+    acendeLeds(tamanhoBinario); //Verifica estados dos LEDs
   }
 
   /*
-    Dois botões pressionados ao mesmo tempo e valor
-    maior que 0 - LEDs acesos (C)
+    Dois botões pressionados ao mesmo tempo e valor diferente de 0,
+    Resetará o contador para 0 e LEDs ficarão apagados
   */
   else if (tamanhoBinario != 0 &&
            (estadoBotaoA == HIGH && estadoBotaoB == HIGH)
@@ -87,15 +88,17 @@ void loop()
     tamanhoBinario = 0;
     //Aqui para ver se foi os 2 pressionados ligar, o LED da placa
     digitalWrite(13, HIGH);
-    digitalWrite(10, LOW);
-    digitalWrite(12, LOW);
-    delay(1000);
+    
+    digitalWrite(12, LOW); //Desliga LED A
+    digitalWrite(10, LOW); //Desliga LED B
+
+    //Delay e desliga LED da placa que indica que dois botões foram pressionados
+    delay(1000);    
     digitalWrite(13, LOW);
 
     Serial.println("Indicador resetado"); //Imprime no monitor
     delay(2000); //Para não ir muito rápido e já ir para a parte D do exercício
-    acendeLeds(tamanhoBinario);
-
+    acendeLeds(tamanhoBinario); //Método de verificação do número binário
   }
 
 
@@ -112,8 +115,6 @@ void loop()
       delay(500); //Delay de 500 milisegundos para esperar
       acendeLeds(tamanhoBinario);
     }
-
-
   }
   /*
     Se botão 4 for pressionado e o 2 não for,
