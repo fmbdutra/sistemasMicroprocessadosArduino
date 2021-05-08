@@ -7,7 +7,8 @@
 *		POT = 0 	- LED_VM_LD1, LED_VM_LD2, LED_VM_LD3 e LED_VM_LD4(OFF)	*
 *		POT = 1023	- LED_VM_LD1, LED_VM_LD2, LED_VM_LD3 e LED_VM_LD4(ON)	*
 *		POT entre 0 e 1023	os LEDs devem ligar de maneira proporcional e	*
-*		crescente ao valor lido.															*
+*		crescente ao valor lido.
+															*
 *																			*
 *	2 – A partir de dois botões, controle o acionamento dos 4 LEDs Verdes	*
 *	que	devem funcionar como um contador “BCD”. Um terceiro botão deverá    *
@@ -47,7 +48,10 @@
 // Variaveis utilizadas na questao 1
 //
 
+
 //***************************************************************************
+unsigned int leitura_potenciomentro = 0; //leitura do potenciometro 
+unsigned int leitura_anterior_potenciometro = 0; //grava leitura anterior para comparacao
 
 
 //***************************************************************************
@@ -107,7 +111,18 @@ void setup()
 
   //Define a velocidade de comunicacao da serial do monitor serial
   Serial.begin(9600); 
-
+  
+  //**************************************
+  //LEDS questao 1
+  pinMode(LED_VM_LD1, OUTPUT);
+  pinMode(LED_VM_LD2, OUTPUT);
+  pinMode(LED_VM_LD3, OUTPUT);
+  pinMode(LED_VM_LD4, OUTPUT);
+  
+  leitura_anterior_potenciometro = leitura_potenciomentro;
+  
+  //***********************************
+  //LEDS e bototes questao 2
   pinMode(LED_VR_LD1, OUTPUT);
   pinMode(LED_VR_LD2, OUTPUT);
   pinMode(LED_VR_LD3, OUTPUT);
@@ -129,6 +144,54 @@ void loop()
 //***************************************************************************
 //Questao 1
 //***************************************************************************
+   leitura_potenciomentro = analogRead(POT); //leitura valor potenciometro
+  
+  //
+  if(leitura_anterior_potenciometro != leitura_potenciomentro){ 
+    Serial.print("VALOR POTENCIMETRO: ");
+    Serial.println(leitura_potenciomentro);  
+ 
+ //LEDS DESLIGADOS
+  if(leitura_potenciomentro > 0 && leitura_potenciomentro < 200){
+	  digitalWrite(LED_VM_LD1, LOW);
+	  digitalWrite(LED_VM_LD2, LOW);
+	  digitalWrite(LED_VM_LD3, LOW);
+	  digitalWrite(LED_VM_LD4, LOW);
+	  
+  //ACENDER PRIMEIRO LED
+  } else if (leitura_potenciomentro > 200 && leitura_potenciomentro < 400){
+	  digitalWrite(LED_VM_LD1, HIGH);
+	  digitalWrite(LED_VM_LD2, LOW);
+	  digitalWrite(LED_VM_LD3, LOW);
+	  digitalWrite(LED_VM_LD4, LOW);
+	  
+  //ACENDE PRIMEIRO, SEGUNDO LEDS
+  }else if (leitura_potenciomentro > 400 && leitura_potenciomentro < 600){
+	  digitalWrite(LED_VM_LD1, HIGH);
+	  digitalWrite(LED_VM_LD2, HIGH);
+	  digitalWrite(LED_VM_LD3, LOW);
+	  digitalWrite(LED_VM_LD4, LOW);
+	  
+  //ACENDE PRIMEIRO, SEGUNDO E TERCEIRO LED
+  } else if (leitura_potenciomentro > 600 && leitura_potenciomentro < 800){
+	  digitalWrite(LED_VM_LD1, HIGH);
+	  digitalWrite(LED_VM_LD2, HIGH);
+	  digitalWrite(LED_VM_LD3, HIGH);
+	  digitalWrite(LED_VM_LD4, LOW);
+	  
+  //ACENDE TODOS OS LEDS
+  } else if (leitura_potenciomentro > 800 && leitura_potenciomentro < 1023){
+	  digitalWrite(LED_VM_LD1, HIGH);
+	  digitalWrite(LED_VM_LD2, HIGH);
+	  digitalWrite(LED_VM_LD3, HIGH);
+	  digitalWrite(LED_VM_LD4, HIGH);
+  }
+  
+
+    //SETAR VALOR LIDO PARA QUANDO MUDAR, ENTRAR NO IF
+    //(CASO NAO TER ISSO E O IF, LERA INFINITO)
+  	leitura_anterior_potenciometro = leitura_potenciomentro;    
+  }  
   
 //***************************************************************************  
 
@@ -159,7 +222,6 @@ void loop()
   }
   
   if (contadorBinario == 0) {
-    Serial.println("0 BIT");
     digitalWrite(LED_VR_LD1, LOW);
     digitalWrite(LED_VR_LD2, LOW);
 	digitalWrite(LED_VR_LD3, LOW);
@@ -167,7 +229,6 @@ void loop()
   }
   //Caso for 1 bit, acender apenas LED da esquerda
   else if (contadorBinario == 1) {
-    Serial.println("1 BIT");
     digitalWrite(LED_VR_LD1, LOW);
     digitalWrite(LED_VR_LD2, LOW);
 	digitalWrite(LED_VR_LD3, LOW);
@@ -175,7 +236,6 @@ void loop()
   }
   //Caso for 2 bits
   else if (contadorBinario == 2) {
-    Serial.println("2 BIT");
     digitalWrite(LED_VR_LD1, LOW);
     digitalWrite(LED_VR_LD2, LOW);
 	digitalWrite(LED_VR_LD3, HIGH);
@@ -183,7 +243,6 @@ void loop()
   }
   //Caso for 3 bits
   else if (contadorBinario == 3) {
-    Serial.println("3 BIT");
     digitalWrite(LED_VR_LD1, LOW);
     digitalWrite(LED_VR_LD2, LOW);
 	digitalWrite(LED_VR_LD3, HIGH);
@@ -192,7 +251,6 @@ void loop()
   
   //Caso for 4 bits
   else if (contadorBinario == 4) {
-    Serial.println("4 BIT");
     digitalWrite(LED_VR_LD1, LOW);
     digitalWrite(LED_VR_LD2, HIGH);
 	digitalWrite(LED_VR_LD3, LOW);
@@ -201,7 +259,6 @@ void loop()
   
   //Caso for 5 bits
   else if (contadorBinario == 5) {
-    Serial.println("5 BIT");
     digitalWrite(LED_VR_LD1, LOW);
     digitalWrite(LED_VR_LD2, HIGH);
 	digitalWrite(LED_VR_LD3, LOW);
@@ -210,7 +267,6 @@ void loop()
   
   //Caso for 6  bits
   else if (contadorBinario == 6) {
-    Serial.println("6 BIT");
     digitalWrite(LED_VR_LD1, LOW);
     digitalWrite(LED_VR_LD2, HIGH);
 	digitalWrite(LED_VR_LD3, HIGH);
@@ -219,7 +275,6 @@ void loop()
   
   //Caso for 7 bits
   else if (contadorBinario == 7) {
-    Serial.println("7 BIT");
     digitalWrite(LED_VR_LD1, LOW);
     digitalWrite(LED_VR_LD2, HIGH);
 	digitalWrite(LED_VR_LD3, HIGH);
@@ -228,7 +283,6 @@ void loop()
  
   //Caso for 8 bits
   else if (contadorBinario ==  8) {
-    Serial.println("8 BIT");
     digitalWrite(LED_VR_LD1, HIGH);
     digitalWrite(LED_VR_LD2, LOW);
 	digitalWrite(LED_VR_LD3, LOW);
@@ -237,7 +291,6 @@ void loop()
 
   //Caso for 9 bits
   else if (contadorBinario == 9) {
-    Serial.println("9 BIT");
     digitalWrite(LED_VR_LD1, HIGH);
     digitalWrite(LED_VR_LD2, LOW);
 	digitalWrite(LED_VR_LD3, LOW);
