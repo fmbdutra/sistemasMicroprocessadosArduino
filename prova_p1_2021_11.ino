@@ -53,7 +53,6 @@
 unsigned int leitura_potenciomentro = 0; //leitura do potenciometro 
 unsigned int leitura_anterior_potenciometro = 0; //grava leitura anterior para comparacao
 
-
 //***************************************************************************
 
 //***************************************************************************
@@ -84,6 +83,9 @@ int botaoDecremental;
 int botaoReset;
 unsigned int contadorBinario;
 
+unsigned int valor_bit_anterior; //para imprimir bit
+
+
 //***************************************************************************
 
 
@@ -99,7 +101,27 @@ unsigned int contadorBinario;
 
 // Variaveis utilizadas na questao 3
 //
+int unsigned leitura_LDR;
+int unsigned leitura_anterior_LDR;
 
+float valor_calculado;
+float tensao;
+
+/*
+  tensao = leitura * 5 / 1024
+  
+  679 (máximo mostra LDR) * 5 = 3395 / 1023 = 3,318 =~ 3,32
+  
+  3,32 (tensao maxima)       = 1024(bits)
+    x  (tensao ligar alarme) = 307 (30% bits)
+  
+  x = 0,995 volts
+  
+  0,99 * 1024 = 1.013,76 -> 1013,76/5 = 202,75 =~203 --> Leitura de 30% do LDR     
+  */
+float alarme_disparo_tensao = 0.99; 
+
+int Flag_alarme;
 //***************************************************************************
 
 
@@ -221,6 +243,12 @@ void loop()
 	contadorBinario = 0; 
   }
   
+  if (valor_bit_anterior != contadorBinario){
+  	Serial.print("Contador Bits = ");
+    Serial.println(contadorBinario);
+
+  }
+  
   if (contadorBinario == 0) {
     digitalWrite(LED_VR_LD1, LOW);
     digitalWrite(LED_VR_LD2, LOW);
@@ -297,7 +325,8 @@ void loop()
     digitalWrite(LED_VR_LD4, HIGH);
   }
   
-    delay(100);
+  delay(100);
+  valor_bit_anterior = contadorBinario;
 
 //***************************************************************************    
 
@@ -305,6 +334,36 @@ void loop()
 //***************************************************************************
 //Questao 3
 //***************************************************************************
+   leitura_LDR = analogRead(LDR); //leitura valor potenciometro
+   
+  //FAZ CALCULO PARA DESCOBRIR TENSAO
+  //LEITOR DE 10 BITS (2^10=1024)
+  valor_calculado = leitura_LDR * 5;   
+  tensao = valor_calculado/1024;
   
+  if(leitura_anterior_LDR != leitura_LDR){
+    Serial.print("Valor LDR: ");
+    Serial.println(leitura_LDR);
+    Serial.print("Tensao LDR: ");
+    Serial.println(tensao);
+    
+    //Variavel alarme_disparo_tensao explicada ao declarar
+    if(tensao <= alarme_disparo_tensao){
+      Flag_alarme = 1;
+      digitalWrite(LED_ALARME, HIGH);
+    } else {
+      Flag_alarme = 0;
+      digitalWrite(LED_ALARME, LOW);
+    }
+    
+    if(Flag_alarme) Serial.println("LED Alarme ON");
+  	else Serial.println("LED Alarme OFF");
+
+    leitura_anterior_LDR = leitura_LDR;
+  }
+  
+    
+  
+	
 //***************************************************************************  
 }
